@@ -15,63 +15,70 @@
 // Dependencies
 // ===========================================================
 var express = require("express");
+const { table } = require("console");
 
 var app = express();
 var PORT = 3000;
 
 // Data
 // ===========================================================
-var characters = [{
-  routeName: "yoda",
-  name: "Yoda",
-  role: "Jedi Master",
-  age: 900,
-  forcePoints: 2000
+var tables = [{
+    routeName: "yoda",
+    name: "Yoda",
+    role: "Jedi Master",
+    age: 900,
+    forcePoints: 2000
 }, {
-  routeName: "darthmaul",
-  name: "Darth Maul",
-  role: "Sith Lord",
-  age: 200,
-  forcePoints: 1200
+    routeName: "darthmaul",
+    name: "Darth Maul",
+    role: "Sith Lord",
+    age: 200,
+    forcePoints: 1200
 }, {
-  routeName: "obiwankenobi",
-  name: "Obi Wan Kenobi",
-  role: "Jedi Master",
-  age: 55,
-  forcePoints: 1350
+    routeName: "obiwankenobi",
+    name: "Obi Wan Kenobi",
+    role: "Jedi Master",
+    age: 55,
+    forcePoints: 1350
 }];
 
 // Routes
-// ===========================================================
+// =============================================================
 
-app.get("/", function(req, res) {
-  res.send("Welcome to Hot Restaurant!");
+// Basic route that sends the user first to the AJAX Page
+app.get("/index", function(req, res) {
+    res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// What does this route do?
-app.get("/api/characters", function(req, res) {
-  return res.json(characters);
+app.get("/api/waitlist", function(req, res) {
+    res.sendFile(path.join(__dirname, "reserve.html"));
 });
 
-// What does this route do?
-app.get("/api/characters/:character", function(req, res) {
-  // What does this code do?
-  var chosen = req.params.character;
-  console.log(chosen);
-
-  // What does this code do?
-  for (var i = 0; i < characters.length; i++) {
-    if (chosen === characters[i].routeName) {
-      return res.json(characters[i]);
-    }
-  }
-
-  // What does this code do?
-  return res.send("No character found");
+// Displays all table
+app.get("/api/tables", function(req, res) {
+    return res.json(tables);
 });
 
-// Listener
-// ===========================================================
+
+// Create New Characters - takes in JSON input
+app.post("/api/table", function(req, res) {
+    // req.body hosts is equal to the JSON post sent from the user
+    // This works because of our body parsing middleware
+    var newTables = req.body;
+
+    // Using a RegEx Pattern to remove spaces from newCharacter
+    // You can read more about RegEx Patterns later https://www.regexbuddy.com/regex.html
+    newTables.routeName = newTables.name.replace(/\s+/g, "").toLowerCase();
+
+    console.log(newTables);
+
+    tables.push(newTables);
+
+    res.json(newTables);
+});
+
+// Starts the server to begin listening
+// =============================================================
 app.listen(PORT, function() {
-  console.log("App listening on PORT " + PORT);
+    console.log("App listening on PORT " + PORT);
 });
