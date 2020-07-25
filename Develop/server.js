@@ -15,13 +15,14 @@
 // Dependencies
 // ===========================================================
 var express = require("express");
+const { table } = require("console");
 
 var app = express();
 var PORT = 3000;
 
 // Data
 // ===========================================================
-var characters = [{
+var tables = [{
     routeName: "yoda",
     name: "Yoda",
     role: "Jedi Master",
@@ -42,46 +43,38 @@ var characters = [{
 }];
 
 // Routes
-// ===========================================================
+// =============================================================
 
-app.get("/", function(req, res) {
-    res.send("Welcome to Hot Restaurant!");
+// Basic route that sends the user first to the AJAX Page
+app.get("/index", function(req, res) {
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// What does this route do?
+app.get("/waitlist", function(req, res) {
+  res.sendFile(path.join(__dirname, "reserve.html"));
+});
+
+// Displays all table
 app.get("/api/tables", function(req, res) {
-    return res.json(characters);
+  return res.json(tables);
 });
 
-// What does this route do?
-app.get("/api/tables", function(req, res) {
-    // What does this code do?
-    var chosen = req.params.character;
-    console.log(chosen);
 
-    // What does this code do?
-    for (var i = 0; i < characters.length; i++) {
-        if (chosen === characters[i].routeName) {
-            return res.json(characters[i]);
-        }
-    }
+// Create New Characters - takes in JSON input
+app.post("/api/table", function(req, res) {
+  // req.body hosts is equal to the JSON post sent from the user
+  // This works because of our body parsing middleware
+  var newTable = req.body;
 
-    // What does this code do?
-    return res.send("No character found");
-});
+  // Using a RegEx Pattern to remove spaces from newCharacter
+  // You can read more about RegEx Patterns later https://www.regexbuddy.com/regex.html
+  newTable.routeName = newTable.name.replace(/\s+/g, "").toLowerCase();
 
-// Listener
-// ===========================================================
-app.listen(PORT, function() {
-    console.log("App listening on PORT " + PORT);
-});
-  console.log(newtables);
+  console.log(newCharacter);
 
-  // We then add the json the user sent to the tables array
-  tables.push(newtables);
+  tables.push(newCharacter);
 
-  // We then display the JSON to the users
-  res.json(newtables);
+  res.json(newCharacter);
 });
 
 // Starts the server to begin listening
